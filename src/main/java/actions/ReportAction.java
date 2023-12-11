@@ -114,7 +114,8 @@ public class ReportAction extends ActionBase {
                     getRequestParam(AttributeConst.REP_TITLE),
                     getRequestParam(AttributeConst.REP_CONTENT),
                     null,
-                    null);
+                    null,
+                    0);
 
             //日報情報登録
             List<String> errors = service.create(rv);
@@ -233,5 +234,22 @@ public class ReportAction extends ActionBase {
 
             }
         }
+    }
+
+    public void likeCount() throws ServletException, IOException {
+            //idを条件に日報データを取得する
+            ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+
+            //入力された日報内容を設定する
+            rv.setLikeCount(rv.getLikeCount() + 1);
+
+            //日報データを更新する
+            service.update(rv);
+
+                //セッションにいいねのフラッシュメッセージを設定
+                putSessionScope(AttributeConst.FLUSH, MessageConst.I_LILECOUNT.getMessage());
+
+                //一覧画面にリダイレクト
+                redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
     }
 }
